@@ -1,0 +1,59 @@
+URl de recursor API JavaScript
+
+
+Git-Hub de esri
+http://esri.github.io/
+
+
+Otro buen SandBox
+http://jsfiddle.net/
+
+
+Web de dojo
+http://dojotoolkit.org/
+
+
+Pagina API JavaScript 
+http://js.arcgis.com/
+
+
+Requiere.js
+http://requirejs.org
+
+
+Ayuda sobre HTML5 - Principiantes - Ingles
+http://diveintohtml5.info/
+
+
+Ayuda JavaScript - Principiantes - Ingles
+http://eloquentjavascript.net/
+
+
+Curso interactivo gratuito de JavaScript- Principiantes - Castellano
+http://www.codecademy.com/tracks/javascript-latinamerica
+
+
+Calculadora 
+http://www.esri.com/software/arcgis/arcgisonline/credits/estimator
+
+
+Uno de los mejores editores de HTML y JavaScript
+https://code.visualstudio.com/
+http://www.sublimetext.com/3
+
+
+
+Url de iconos vectoriales para usar en nuestras apps
+http://fontawesome.io/
+
+
+Plantillas bootstrap
+https://wrapbootstrap.com/
+
+
+Test de rendimiento de gráficos
+http://servicesbeta.esri.com/demos/graphics-performance/points.html
+
+
+Web de iconos vectoriales gratis
+http://www.flaticon.com/

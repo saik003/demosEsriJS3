@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <!--The viewport meta tag is used to improve the presentation and behavior of the samples 
+      on iOS devices-->
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title></title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.27/dijit/themes/soria/soria.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.27/esri/css/esri.css">
+    <!-- <link rel="stylesheet" href="css/layout.css"> -->
+
+<style>
+      html, body { 
+        height: 100%; width: 100%; margin: 0; 
+      } 
+      body{
+        background-color:white; overflow:hidden; 
+        font-family: "Trebuchet MS"; 
+      }
+      .roundedCorners{
+        -moz-border-radius: 4px;      
+      }
+      #header {
+        border: solid 2px #7EABCD;
+        background-color:white; color:peru; font-size:18pt; 
+        text-align:center; font-weight:bold; height:60px;
+      }
+      #subheader {
+        font-size:small;
+        color: peru;
+      }
+      #rightPane{
+        background-color:white;
+        color:peru;
+        border: solid 2px cornflowerblue;
+        width:10%;
+        overflow:hidden;
+      }
+      #map {
+        background-color:white;
+        border:solid 2px cornflowerblue;
+      }
+      #footer {
+        border: solid 2px #7EABCD;
+        background-color:white;color:peru;font-size:10pt; text-align:center; height:150px;
+      }
+      .soria .dojoxGridHeader .dojoxGridCell   {
+        color:peru !important;
+      }
+      #where{
+        width: 110px;
+      }
+</style>
+    <script src="https://js.arcgis.com/3.27/"></script>
+
+     <script>
+      var map;
+
+      require(["esri/map",
+        "esri/dijit/OverviewMap",
+        "dojo/parser", 
+        "esri/layers/ArcGISDynamicMapServiceLayer",
+        "dojo/on",
+        "esri/tasks/QueryTask",
+        "esri/tasks/query",
+        "esri/tasks/FeatureSet",
+        "dojo/_base/array",
+        "esri/symbols/SimpleMarkerSymbol",
+        "esri/graphic",
+        "esri/layers/FeatureLayer",
+
+        "dojo/data/ItemFileReadStore",
+        "dojox/grid/DataGrid",
+
+
+
+        "dijit/layout/ContentPane",
+        "dijit/layout/BorderContainer",
+        "dojo/domReady!"], function(
+          Map,
+          OverviewMap,
+          parser,
+          ArcGISDynamicMapServiceLayer,
+          on,
+          QueryTask,
+          Query,
+          FeatureSet,
+          arrayUtils,
+          SimpleMarkerSymbol,
+          Graphic,
+          FeatureLayer,
+
+          ItemFileReadStore,
+          DataGrid
+
+          ) {
+
+        parser.parse(); 
+        map = new Map("map", {
+          basemap: "topo",
+          center: [-4.111,42.9378],
+          zoom: 4,
+          sliderStyle: "small"
+        });
+
+        var overviewMapDijit = new OverviewMap({
+          map: map,
+          visible: true
+        });
+        overviewMapDijit.startup();
+
+        /*var layer = new ArcGISDynamicMapServiceLayer(
+          "http://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/MapServer");
+
+        map.addLayer(layer);
+        */
+
+        var layer = new FeatureLayer(
+          "http://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/MapServer/0",
+          {
+            id: "capaFeature"
+          });
+        map.addLayer(layer);
+
+        layer.on("click",seleccionarEnGrid);
+
+
+          function seleccionarEnGrid(e) {
+            var id = e.graphic.attributes.objectid;
+            // select the feature that was clicked
+            var query = new Query();
+            query.objectIds = [id];
+            var states = map.getLayer("capaFeature");
+            states.selectFeatures(query, FeatureLayer.SELECTION_NEW);
+            // select the corresponding row in the grid
+            // and make sure it is in view
+            grid.selection.clear();
+
+            //Si queremos que se seleccione en el grid
+            var numFila= GetGridItemIndexByGridItem(id);
+            grid.selection.setSelected(numFila,true);
+            grid.scrollToRow(numFila);
+          }
+
+          function GetGridItemIndexByGridItem(objectID) { 
+            for (var i = 0; i < grid.rowCount; i++) { 
+                element = grid.store._arrayOfAllItems[i];
+                if (element.objectid[0] == objectID) { 
+                    gridItemIndex = i; 
+                    break;
+                } 
+            } 
+            return gridItemIndex; 
+          }
+
+
+        var symbolMarker = new SimpleMarkerSymbol({
+            "color": [255,255,255,64],
+            "size": 12,
+            "angle": -30,
+            "xoffset": 0,
+            "yoffset": 0,
+            "type": "esriSMS",
+            "style": "esriSMSCircle",
+            "outline": {
+              "color": [0,0,0,255],
+              "width": 1,
+              "type": "esriSLS",
+              "style": "esriSLSSolid"
+            }
+        });
+
+       
+       on(dojo.byId("botonConsulta"),"click",LanzarQueryF);
+
+       function LanzarQueryF(){
+        var queryTask = new QueryTask("http://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/MapServer/0");
+        var query = new Query();
+        query.where="typdamage='" + dojo.byId("where").value + "'";
+        query.returnGeometry=true ;
+        query.outFields = ["objectid","firstname","lastname","represent"];
+        queryTask.execute(query, showResults);
+       }
+
+       function showResults(valores){
+
+        var items = arrayUtils.map(valores.features, function (result) {
+          var graphic = new Graphic(result.geometry,symbolMarker,result.attributes);
+          map.graphics.add(graphic);
+          return result.attributes;
+        });
+
+
+        var data = {
+            identifier : "objectid", //This field needs to have unique values
+            items : items
+        };
+         store = new dojo.data.ItemFileReadStore({data:data});
+            grid.setStore(store);
+        
+        }
+        grid.on("rowclick", onRowClickHandler);
+
+        function onRowClickHandler(evt) {
+          var clickedTaxLotId = evt.grid.getItem(evt.rowIndex).objectid;
+          var selectedTaxLot = arrayUtils.filter(map.graphics.graphics, function (graphic) {
+            return ((graphic.attributes) && graphic.attributes.objectid === clickedTaxLotId);
+          });
+          if ( selectedTaxLot.length ) {
+            map.centerAndZoom(selectedTaxLot[0].geometry,15);
+            
+          }
+        }
+
+
+      });
+    </script>
+
+   
+  </head> 
+  <body class="soria">
+    <div id="mainWindow" data-dojo-type="dijit.layout.BorderContainer" 
+         data-dojo-type="design:'headline', gutters:false" 
+         style="width:100%; height:100%;">
+
+      <div id="header" 
+           data-dojo-type="dijit.layout.ContentPane"  class="roundedCorners" 
+           data-dojo-props="region:'top'">
+        Master GIS ESRI España
+      </div>
+
+      <div id="map" data-dojo-type="dijit.layout.ContentPane" class="roundedCorners" 
+           data-dojo-props="region:'center'">
+      </div>
+
+      <div data-dojo-type="dijit.layout.ContentPane" id="rightPane" class="roundedCorners" 
+           data-dojo-props="region:'right', splitter:true">
+          <input id="where" data-dojo-type="dijit/form/TextBox" value="Major" style="width: 7em;" />
+          <button data-dojo-type="dijit.form.Button" id="botonConsulta">LanzarQuery</button>
+      </div>
+
+      <div id="footer" class="roundedCorners" data-dojo-type="dijit.layout.ContentPane" 
+           data-dojo-props="region:'bottom'">
+        <table data-dojo-type="dojox.grid.DataGrid" jsid="grid" id="grid" selectionMode="single">
+         <thead>
+            <tr>
+              <th field="objectid" width="100%"></th> 
+              <th field="firstname" width="100%"></th>
+              <th field="lastname" width="100%"></th>
+              <th field="represent" width="100%"></th>
+
+            </tr>
+          </thead>
+        </table>
+      </div> 
+    </div>
+  </body>
+</html>
