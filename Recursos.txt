@@ -1,5 +1,7 @@
 URl de recursor API JavaScript
 
+Comienzo y nociones basicas
+http://jstherightway.org/es-es/#getting-started
 
 Git-Hub de esri
 http://esri.github.io/
@@ -57,3 +59,8 @@ http://servicesbeta.esri.com/demos/graphics-performance/points.html
 
 Web de iconos vectoriales gratis
 http://www.flaticon.com/
+
+Para buscar recursos de un api , framework o tecnología en gitHub escribir "awesome" y lo que queramos buscar
+
+Reglas para escribir JavaScript
+https://github.com/rwaldron/idiomatic.js/tree/master/translations/es_ES
