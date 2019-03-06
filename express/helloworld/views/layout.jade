@@ -1,0 +1,18 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='https://js.arcgis.com/3.27/esri/css/esri.css')
+  body
+    block content
+    script(src="https://js.arcgis.com/3.27/")
+    script.
+      require(["esri/map", "dojo/domReady!"], function(Map) {
+            var map = new Map("map", {
+                center: [-118, 34.5],
+                zoom: 8,
+                basemap: "topo"
+            });
+        });
+
