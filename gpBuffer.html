@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Simple Map</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.27/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background-color: #FFF;
+        overflow: hidden;
+        font-family: "Trebuchet MS";
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.27/"></script>
+    <script>
+      var map, tb;
+
+      require(["esri/map",
+        "esri/layers/ArcGISDynamicMapServiceLayer",
+        "esri/symbols/SimpleMarkerSymbol",
+        "esri/toolbars/draw",
+        "esri/graphic",
+        "esri/tasks/GeometryService",
+        "esri/tasks/BufferParameters",
+        "esri/SpatialReference",
+        "dojo/dom", 
+        "esri/symbols/SimpleFillSymbol",
+        "esri/symbols/SimpleLineSymbol",
+        "dojo/_base/Color",
+        "dojo/domReady!"],
+        function(
+          Map,
+          ArcGISDynamicMapServiceLayer,
+          SimpleMarkerSymbol,
+          Draw,
+          Graphic,
+          GeometryService,
+          BufferParameters,
+          SpatialReference,
+          dom,
+          SimpleFillSymbol,
+          SimpleLineSymbol,
+          Color) {
+
+            var gs = new GeometryService("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Utilities/Geometry/GeometryServer");
+            gs.on("buffer-complete",resultadoBuffer);
+
+            map = new Map("map", {
+              basemap: "topo",
+              center: [-3.6726702,40.3701147], // long, lat
+              zoom: 8,
+              sliderStyle: "small"
+            });
+
+            // var layer = new ArcGISDynamicMapServiceLayer(
+            //   "http://localhost:6080/arcgis/rest/services/Master/GPMap/MapServer");
+
+            // map.addLayer(layer);
+
+            var symbolMarker = new SimpleMarkerSymbol({
+              "color": [255,255,255,64],
+              "size": 12,
+              "angle": -30,
+              "xoffset": 0,
+              "yoffset": 0,
+              "type": "esriSMS",
+              "style": "esriSMSCircle",
+              "outline": {
+                "color": [0,0,0,255],
+                "width": 1,
+                "type": "esriSLS",
+                "style": "esriSLSSolid"
+              }
+            });
+
+            tb = new Draw(map);
+            tb.on("draw-end", addGraphic);
+            tb.activate("point");
+
+
+            function addGraphic(evt) {
+              
+              //tb.deactivate(); 
+ 
+              map.graphics.add(new Graphic(evt.geometry, symbolMarker));
+
+
+              var params = new BufferParameters();
+              params.geometries  = [ evt.geometry ];
+              
+              params.distances = [50];
+              params.unit = GeometryService.UNIT_KILOMETER;
+              params.outSpatialReference = map.spatialReference;
+              gs.buffer(params);
+
+
+            }
+
+            function resultadoBuffer(evt){
+              var symbol = new SimpleFillSymbol("none", new SimpleLineSymbol("dashdot", new Color([255,0,0]), 2), new Color([255,255,0,0.25]));
+                var graphic = new Graphic(evt.geometries[0],symbol);
+                map.graphics.add(graphic);
+
+                //Ahora enviamos el buffer a la tarea de GP
+            }
+
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="map"></div>
+  </body>
+</html>
