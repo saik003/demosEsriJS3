@@ -1,5 +1,8 @@
 URl de recursor API JavaScript
 
+//Configurable Map Viewer 
+https://cmv.io/
+
 Url curso mozilla server side development
 https://developer.mozilla.org/en-US/docs/Learn/Server-side/
 

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Simple Map</title>
+    <link rel="stylesheet" href="http://js.arcgis.com/3.27/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background-color: #FFF;
+        overflow: hidden;
+        font-family: "Trebuchet MS";
+      }
+      .earthquakes path{
+        fill: none;
+        stroke: #ee4500;
+        stroke-width: 14;
+        stroke-opacity: .4;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        -webkit-animation: progress-bar-stripes 2s linear infinite;
+        -o-animation: progress-bar-stripes 2s linear infinite;
+        animation: progress-bar-stripes 1s linear infinite;
+        background-image: linear-gradient(135deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+      
+      }
+      @keyframes dash {
+        to {
+          stroke-dashoffset: 1000;
+        }
+      }
+
+      @keyframes dash {
+        to {
+          stroke-dashoffset: 1000;
+        }
+      }
+      @keyframes progress-bar-stripes
+      {
+        0%   {stroke: red;}
+        50%  {stroke: blue;}
+        100% {stroke: red;}
+      }
+   
+      /*Pulse opacity*/
+     @keyframes pulse{
+        0%{opacity: 1.0;}
+        45%{opacity: .20;}
+        100%{opacity: 1.0;}
+      }
+
+     @-webkit-keyframes pulse{
+        0%{opacity: 1.0;}
+        45%{opacity: .20;}
+        100%{opacity: 1.0;}
+      }
+     /* .earthquakes {
+        -webkit-animation: progress-bar-stripes 2s linear infinite;
+        -o-animation: progress-bar-stripes 2s linear infinite;
+        animation: progress-bar-stripes 2s linear infinite;
+        background-image: linear-gradient(135deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+        background-color: #d73d32 !important;
+
+      }*/
+
+
+     /* .earthquakes {
+        -webkit-animation: pulse 3s infinite;
+        -moz-animation: pulse 3s infinite;
+        animation: pulse 3s infinite;
+      }*/
+    </style>
+    <script src="http://js.arcgis.com/3.27/"></script>
+    <script>
+      var map, csv;
+
+      require([
+        "esri/map", 
+        "esri/layers/CSVLayer",
+        "esri/Color",
+        "esri/symbols/SimpleMarkerSymbol",
+        "esri/renderers/SimpleRenderer",
+        "esri/InfoTemplate",
+        "esri/urlUtils",
+         "esri/geometry/Polyline",
+         "esri/layers/GraphicsLayer",
+         "esri/symbols/SimpleLineSymbol", "esri/Color",
+         "esri/graphic",
+        "dojo/domReady!"
+      ], function(
+        Map, CSVLayer, Color, SimpleMarkerSymbol, SimpleRenderer, InfoTemplate, urlUtils,Polyline,GraphicsLayer,SimpleLineSymbol, Color,Graphic
+      ) {
+
+        map = new Map("map", {
+          basemap: "gray",
+          center: [ -60, -10 ],
+          zoom: 4 
+        });
+
+         var polylineJson = {"paths":[[[-5361543.252289285,5527906.498838094],[-352166.16659330577,3453711.2992921025],[-430437.6835573055,7034633.200395088],[-4226606.25631129,8639199.298157081],[-8257589.379957274,-1281715.4770298786],[410981.12380569056,-2181837.9221158735],[1056721.1387586892,1946984.5977351088]]],"spatialReference":{"wkid":102100,"latestWkid":3857}};
+
+        var polyline = new Polyline(polylineJson);
+        var countyLayer = new GraphicsLayer({
+           className: "earthquakes"
+         });  
+        map.addLayer(countyLayer);
+        var sls = new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,new Color([255,0,0]),3);
+        var graphic = new Graphic(polyline,sls);
+        countyLayer.add(graphic);
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="map"></div>
+  </body>
+</html>

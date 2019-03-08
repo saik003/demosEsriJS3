@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Simple Map</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.27/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script>
+        window.dojoConfig = {
+        packages: [
+        {
+        name: "componentes",
+        location: location.pathname.replace(/\/[^/]+$/, '') + '/js'
+,
+        }]
+    };
+    </script>
+
+    <script src="https://js.arcgis.com/3.27/"></script>
+    <script>
+
+      require(["componentes/def1","componentes/def2"],function(comp1,comp2){
+        comp1.val=5;
+        // require(["componentes/def1","componentes/def3"],function(comp1Nuevo,comp2){
+        //   debugger;
+        // });
+          require(["componentes/def3"],function(comp3){
+           debugger;
+         });
+
+      });
+      // 1.-
+      //Hacemos un require del componente mapa
+      require(["componentes/map"],function(mapa){
+          //let scale= require(["componentes/scale"]);
+
+          require(["componentes/scale"],function(scale){
+            let _scale= scale;
+          });
+      })
+      // 2.-
+      
+    </script>
+  </head>
+
+  <body>
+    <div id="map"></div>
+  </body>
+</html>

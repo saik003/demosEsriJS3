@@ -1,0 +1,15 @@
+{
+  "name": "newjs",
+  "version": "1.0.0",
+  "description": "Ejemplo de desarrollo moderno",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Carlos Guerrero López",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^2.6.1",
+    "express": "^4.16.4"
+  }
+}
