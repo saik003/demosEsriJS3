@@ -7,7 +7,7 @@
   <meta name="description" content="Calcite Maps Demo - ArcGIS">
   <meta name="author" content="">
   <link rel="icon" href="https://www.esri.com/favicon.ico">
-  <title>Calcite Maps - ArcGIS Sample</title>
+  <title>Experto Desarrollo ESRI JS</title>
 
  <!-- Calcite Maps Bootstrap -->
   <link rel="stylesheet" href="calcite-maps/css/calcite-maps-bootstrap.min-v0.10.css">
@@ -41,6 +41,7 @@
       </a>
       <ul class="dropdown-menu">
         <li><a role="menuitem" tabindex="0" data-target="#panelInfo" aria-haspopup="true"><span class="glyphicon glyphicon-info-sign"></span> Herramientas</a></li>
+        <li><a role="menuitem" tabindex="0" data-target="#panelLeyenda" aria-haspopup="true"><span class="glyphicon glyphicon-info-sign"></span> Leyenda</a></li>
         <li><a role="menuitem" tabindex="0" data-target="#panelDirecciones" aria-haspopup="true"><span class="glyphicon glyphicon-info-sign"></span> Direcciones</a></li>
         <li><a class="visible-xs" role="button" data-target="#panelSearch" aria-haspopup="true"><span class="glyphicon glyphicon-search"></span> Buscar</a></li>
         <li><a role="menuitem" tabindex="0" data-target="#panelBasemaps" aria-haspopup="true"><span class="glyphicon glyphicon-th-large"></span> Basemaps</a></li>
@@ -81,8 +82,8 @@
       <div id="collapseInfo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingInfo">
         <div class="panel-body">
           <div class="row">
-            <div class="col-sm-6"><button type="button" class="btn btn-primary">Cargar Capa dinámica</button></div>
-            <div class="col-sm-6"><button type="button" class="btn btn-primary">Cargar Feature Layer</button></div>
+            <div class="col-sm-6"><button   id="btnCargarMapa" type="button" class="btn btn-primary">Cargar Capa dinámica</button></div>
+            <div class="col-sm-6"><button id="btnCargarFeatureLayer" type="button" class="btn btn-primary">Cargar Feature Layer</button></div>
           </div>
           <hr>
           <h5>Filtros a Capa</h5>
@@ -97,7 +98,7 @@
           <hr>
           <h5>Dibujar</h5>
           <div class="row justify-content-center margin-top-10">
-              <div class="col-sm-4"><button type="button" class="btn btn-primary">Punto</button></div>
+              <div class="col-sm-4"><button type="button" id="btnDibujarPunto" class="btn btn-primary">Punto</button></div>
               <div class="col-sm-4"><button type="button" class="btn btn-primary">Línea</button></div>
               <div class="col-sm-4"><button type="button" class="btn btn-primary">Polígono</button></div>
           </div>
@@ -106,23 +107,40 @@
           <div class="row justify-content-center margin-top-10">
               <div class="col-sm-4"><button type="button" class="btn btn-primary">Lanzar consulta</button></div>
           </div>
+          <hr>
+          <div class="row justify-content-center margin-top-10">
+              <div class="col-sm-4"><button type="button" id="btnImprimir" class="btn btn-primary"></button></div>
+          </div>
         </div>
         </div>
     </div>
 
     <div id="panelDirecciones" class="panel collapse ">
-        <div id="headingInfo" class="panel-heading" role="tab">
+      <div id="headingInfo" class="panel-heading" role="tab">
           <div class="panel-title">
             <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapseInfo"  aria-expanded="true" aria-controls="collapseInfo"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span><span class="panel-label">Direcciones</span></a> 
             <a class="panel-close" role="button" data-toggle="collapse" tabindex="0" href="#panelInfo"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>  
           </div>
+      </div>
+      <div id="collapseInfo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingInfo">
+          <div class="panel-body">
+            <div id="dir"></div>
+          </div>  
         </div>
-        <div id="collapseInfo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingInfo">
-            <div class="panel-body">
-              <div id="dir"></div>
-            </div>  
+    </div>
+    <div id="panelLeyenda" class="panel collapse ">
+      <div id="headingInfo" class="panel-heading" role="tab">
+          <div class="panel-title">
+            <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapseInfo"  aria-expanded="true" aria-controls="collapseInfo"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span><span class="panel-label">Direcciones</span></a> 
+            <a class="panel-close" role="button" data-toggle="collapse" tabindex="0" href="#panelInfo"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>  
           </div>
       </div>
+      <div id="collapseInfo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingInfo">
+          <div class="panel-body">
+            <div id="leyenda"></div>
+          </div>  
+        </div>
+    </div>
   </div>
   
     <!-- Search Panel -->
