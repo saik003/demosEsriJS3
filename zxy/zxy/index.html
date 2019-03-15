@@ -98,15 +98,14 @@
           <hr>
           <h5>Dibujar</h5>
           <div class="row justify-content-center margin-top-10">
-              <div class="col-sm-3"><button  id="punto" type="button" class="btn btn-primary">Punto</button></div>
-              <div class="col-sm-3"><button id="linea" type="button" class="btn btn-primary">Línea</button></div>
-              <div class="col-sm-3"><button id="poligono" type="button" class="btn btn-primary">Polígono</button></div>
-              <div class="col-sm-3"><button id="limpiarCapa" type="button" class="btn btn-primary">Limpiar</button></div>
+              <div class="col-sm-4"><button type="button" id="btnDibujarPunto" class="btn btn-primary">Punto</button></div>
+              <div class="col-sm-4"><button type="button" class="btn btn-primary">Línea</button></div>
+              <div class="col-sm-4"><button type="button" class="btn btn-primary">Polígono</button></div>
           </div>
           <hr>
           <h5>Consulta Espacial</h5>
           <div class="row justify-content-center margin-top-10">
-              <div class="col-sm-4"><button type="button" class="btn btn-primary">Lanzar consulta</button></div>
+              <div class="col-sm-4"><button id="btnConsultaCapa" type="button" class="btn btn-primary">Lanzar consulta</button></div>
           </div>
           <hr>
           <div class="row justify-content-center margin-top-10">
@@ -188,8 +187,8 @@
     </div>
 
   </div> <!-- /.calcite-panels -->
+  
     <script type="text/javascript">
-    
       var dojoConfig = {
         packages: [{
           name: "bootstrap",
