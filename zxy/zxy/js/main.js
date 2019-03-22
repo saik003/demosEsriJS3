@@ -17,6 +17,7 @@ require([
     "esri/toolbars/draw",
     "esri/symbols/SimpleMarkerSymbol",
     "esri/symbols/SimpleLineSymbol",
+    "esri/symbols/SimpleFillSymbol",
     "esri/Color",
     "esri/graphic", 
     "esri/layers/GraphicsLayer",
@@ -30,7 +31,7 @@ require([
 ], function(Map, Search,  CalciteMaps,
     Directions,parser,
     urlUtils,FeatureLayer,ArcGISDynamicMapServiceLayer,Legend,Print,
-    Draw,SimpleMarkerSymbol,SimpleLineSymbol,Color,Graphic,GraphicsLayer,Query) {
+    Draw,SimpleMarkerSymbol,SimpleLineSymbol,SimpleFillSymbol,Color,Graphic,GraphicsLayer,Query) {
         
     parser.parse();
     //all requests to route.arcgis.com will proxy to the proxyUrl defined in this object.
@@ -117,7 +118,10 @@ require([
         app.tb.deactivate(); 
         app.map.enableMapNavigation();
         let capa= app.map.getLayer(app.idCapaGrafica);
-        capa.add(new Graphic(evt.geometry,app.markerSymbol));
+        //capa.add(new Graphic(evt.geometry,app.markerSymbol));
+        capa.add(new Graphic(evt.geometry,app.fillSymbol));
+        
+
     }
 
     function _createSearchWidget(parentId) {
@@ -135,12 +139,16 @@ require([
             document.getElementById("btnCargarMapa").onclick =_cargarMapa;
             document.getElementById("btnDibujarPunto").onclick =_dibujarPunto;
             document.getElementById("btnConsultaCapa").onclick =_consultaFeature;
+            document.getElementById("btnDibujarPoligono").onclick =_dibujarPoligono;
+            
             
         }catch(ex){
             console.error("Error al enlazar eventos")
         }
     }
     /**Eventos*/
+   
+
     //Aplica Query a feature
     function _consultaFeature(){
         let f= app.map.getLayer(app.idNombreFeature);
@@ -148,7 +156,6 @@ require([
         query.where = "MAGNITUDE >6 AND MAGNITUDE < 7"; 
         f.selectFeatures(query,FeatureLayer.SELECTION_NEW);
         f.refresh();
-
     }
     //Carga una capa de tipo featureLayer
     function _cargarFeatureLayer(){
@@ -158,7 +165,7 @@ require([
             let featureLayer= new FeatureLayer(app.urlFeatureLayer, {
                 showAttribution :false,
                 id:app.idNombreFeature,
-         //       mode:FeatureLayer.MODE_SELECTION
+                // mode:FeatureLayer.MODE_SELECTION
             });
             
             app.map.addLayer(featureLayer);
@@ -194,12 +201,21 @@ require([
         app.map.disableMapNavigation();
         app.tb.activate("point");
     }
+    function _dibujarPoligono(){
+        app.map.disableMapNavigation();
+        app.tb.activate("polygon");
+    }
 
     (function _crearSimbologias(){
         app.markerSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 20,
             new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
             new Color([255,0,0]), 1),
             new Color([255,0,255,0.5]));
+
+        app.fillSymbol= new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
+            new SimpleLineSymbol(SimpleLineSymbol.STYLE_DASHDOT,
+            new Color([255,0,0]), 2),new Color([255,255,0,0.25])
+            );
     })();
 
     

@@ -40,6 +40,20 @@ require([
         zoom: app.zoom
     });
 
+    function _cargarFeatureLayer(){
+        if(app.map.graphicsLayerIds.indexOf(app.idNombreFeature)>-1){
+            app.map.getLayer(app.idNombreFeature).setVisibility(!app.map.getLayer(app.idNombreFeature).visible);
+        }else{
+            let featureLayer= new FeatureLayer(app.urlFeatureLayer, {
+                showAttribution :false,
+                id:app.idNombreFeature,
+         //       mode:FeatureLayer.MODE_SELECTION
+            });
+            
+            app.map.addLayer(featureLayer);
+        }
+    }
+
     app.map.on("load", function(){
         app.initialExtent = app.map.extent;
 
@@ -59,7 +73,7 @@ require([
             dibujar("point");
         }
         document.getElementById("linea").onclick=function(){
-            dibujar("polyline");
+            dibujar("extent");
         }
         document.getElementById("poligono").onclick=function(){
             dibujar("polygon");
