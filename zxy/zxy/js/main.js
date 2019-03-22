@@ -19,6 +19,7 @@ require([
     "esri/symbols/SimpleLineSymbol",
     "esri/symbols/SimpleFillSymbol",
     "esri/renderers/UniqueValueRenderer",
+    "esri/renderers/ClassBreaksRenderer",
     "esri/Color",
     "esri/graphic", 
     "esri/layers/GraphicsLayer",
@@ -33,7 +34,8 @@ require([
 ], function(Map, Search,  CalciteMaps,
     Directions,parser,
     urlUtils,FeatureLayer,ArcGISDynamicMapServiceLayer,Legend,Print,
-    Draw,SimpleMarkerSymbol,SimpleLineSymbol,SimpleFillSymbol,UniqueValueRenderer,Color,Graphic,GraphicsLayer,Query,InfoTemplate) {
+    Draw,SimpleMarkerSymbol,SimpleLineSymbol,SimpleFillSymbol,UniqueValueRenderer,
+    ClassBreaksRenderer,Color,Graphic,GraphicsLayer,Query,InfoTemplate) {
         
     parser.parse();
     //all requests to route.arcgis.com will proxy to the proxyUrl defined in this object.
@@ -79,8 +81,11 @@ require([
         })
         app.map.addLayer(capaGrafica);
 
-        let renderer = new UniqueValueRenderer(app.markerSymbol, "TEMATICO");
-        renderer.addValue("1", app.markerSymbolSeleccionado);
+        // let renderer = new UniqueValueRenderer(app.markerSymbol, "TEMATICO");
+        // renderer.addValue("1", app.markerSymbolSeleccionado);
+
+        var renderer = new ClassBreaksRenderer(app.markerSymbol, "magnitude");
+        renderer.addBreak(6, 7, app.markerSymbolSeleccionado);
         capaGrafica.setRenderer(renderer);
 
         app.dinamic = new ArcGISDynamicMapServiceLayer(app.urlMapaDinamico, {
@@ -163,6 +168,7 @@ require([
             }else{
                 elementos[i].attributes.TEMATICO="0"
             }
+           // elementos[i].attributes.magnitude=elementos[i].attributes.magnitude*10
             let g= new Graphic(elementos[i].geometry, 
                 null,
                 elementos[i].attributes,
