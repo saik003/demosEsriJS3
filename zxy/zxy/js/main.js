@@ -18,10 +18,12 @@ require([
     "esri/symbols/SimpleMarkerSymbol",
     "esri/symbols/SimpleLineSymbol",
     "esri/symbols/SimpleFillSymbol",
+    "esri/renderers/UniqueValueRenderer",
     "esri/Color",
     "esri/graphic", 
     "esri/layers/GraphicsLayer",
     "esri/tasks/query",
+    "esri/InfoTemplate",
     // Bootstrap
     "bootstrap/Collapse", 
     "bootstrap/Dropdown",
@@ -31,7 +33,7 @@ require([
 ], function(Map, Search,  CalciteMaps,
     Directions,parser,
     urlUtils,FeatureLayer,ArcGISDynamicMapServiceLayer,Legend,Print,
-    Draw,SimpleMarkerSymbol,SimpleLineSymbol,SimpleFillSymbol,Color,Graphic,GraphicsLayer,Query) {
+    Draw,SimpleMarkerSymbol,SimpleLineSymbol,SimpleFillSymbol,UniqueValueRenderer,Color,Graphic,GraphicsLayer,Query,InfoTemplate) {
         
     parser.parse();
     //all requests to route.arcgis.com will proxy to the proxyUrl defined in this object.
@@ -72,9 +74,14 @@ require([
         app.initialExtent = app.map.extent;
         app.tb = new Draw(app.map);
         app.tb.on("draw-end", addGraphic);
-        app.map.addLayer(new GraphicsLayer({
+        let capaGrafica= new GraphicsLayer({
             id:app.idCapaGrafica
-        }));
+        })
+        app.map.addLayer(capaGrafica);
+
+        let renderer = new UniqueValueRenderer(app.markerSymbol, "TEMATICO");
+        renderer.addValue("1", app.markerSymbolSeleccionado);
+        capaGrafica.setRenderer(renderer);
 
         app.dinamic = new ArcGISDynamicMapServiceLayer(app.urlMapaDinamico, {
             "showAttribution": false,
@@ -118,10 +125,50 @@ require([
         app.tb.deactivate(); 
         app.map.enableMapNavigation();
         let capa= app.map.getLayer(app.idCapaGrafica);
+        //Limpiamos la capa grafica
+        capa.clear();
         //capa.add(new Graphic(evt.geometry,app.markerSymbol));
         capa.add(new Graphic(evt.geometry,app.fillSymbol));
         
+        ejecutarConsulta(evt.geometry);
+    }
+    function ejecutarConsulta(geo){
 
+        
+
+        //Creamos el objeto Query
+        let query = new Query();
+        //Establecemos la propiedad geometry de la Query con la pasada por parametro
+        query.geometry= geo;
+        //Establecemos los campos de retorno
+        query.outFields= ["*"];
+        //Aplicamos el where
+        //query.where = "magnitude >6 AND magnitude < 7"; 
+        //Ejecutamos la funcion queryFeatures y obtenemos los resultados
+        let f= app.map.getLayer(app.idNombreFeature);
+        f.queryFeatures(query,function(resultado){
+            pintarElementos(resultado.features);  
+            console.log("El número de elementos seleccionados es: " + resultado.features.length)
+        });
+
+    }
+
+    function pintarElementos(elementos){
+        let capa= app.map.getLayer(app.idCapaGrafica);
+
+        var infoTemplate = new InfoTemplate("Terremotos","Magnitud: ${magnitude} <br> Nombre: ${name}");
+        for(var i=0;i<elementos.length;i++){
+            if(elementos[i].attributes.magnitude>6 && elementos[i].attributes.magnitude<7){
+                elementos[i].attributes.TEMATICO="1"
+            }else{
+                elementos[i].attributes.TEMATICO="0"
+            }
+            let g= new Graphic(elementos[i].geometry, 
+                null,
+                elementos[i].attributes,
+                infoTemplate);
+            capa.add(g);
+        }
     }
 
     function _createSearchWidget(parentId) {
@@ -140,15 +187,12 @@ require([
             document.getElementById("btnDibujarPunto").onclick =_dibujarPunto;
             document.getElementById("btnConsultaCapa").onclick =_consultaFeature;
             document.getElementById("btnDibujarPoligono").onclick =_dibujarPoligono;
-            
-            
         }catch(ex){
             console.error("Error al enlazar eventos")
         }
     }
     /**Eventos*/
    
-
     //Aplica Query a feature
     function _consultaFeature(){
         let f= app.map.getLayer(app.idNombreFeature);
@@ -173,7 +217,6 @@ require([
     }
     //Carga una capa de tipo ArcGISDynamicMapServiceLayer
     function _cargarMapa(){
-        debugger;
         app.dinamic.setVisibility(!app.dinamic.visible);
         // let nombreCapa="dinamic";
         // if(app.map.layerIds.indexOf(nombreCapa)>-1){
@@ -207,10 +250,15 @@ require([
     }
 
     (function _crearSimbologias(){
-        app.markerSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 20,
+        app.markerSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_DIAMOND, 20,
+            new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+            new Color([255,255,0]), 1),
+            new Color([255,255,0,1]));
+
+        app.markerSymbolSeleccionado = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_DIAMOND, 20,
             new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
             new Color([255,0,0]), 1),
-            new Color([255,0,255,0.5]));
+            new Color([255,0,0,1]));
 
         app.fillSymbol= new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
             new SimpleLineSymbol(SimpleLineSymbol.STYLE_DASHDOT,
@@ -218,7 +266,7 @@ require([
             );
     })();
 
-    
+    _cargarFeatureLayer();
     
 
 });
